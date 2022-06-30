@@ -1,0 +1,23 @@
+{
+   "background": {
+      "persistent": false,
+      "scripts": [ "background.js" ]
+   },
+   "content_scripts": [
+      {
+         "js": [ "flyff.js" ],
+         "matches": [ "*://universe.flyff.com/play*" ]
+      }
+   ],
+   "description": "Auto buttons for Flyff Universe",
+   "icons": {
+      "128": "logo.png",
+      "16": "logo.png",
+      "48": "logo.png"
+   },
+   "manifest_version": 2,
+   "name": "No Cors",
+   "permissions": ["*://*/*"],
+   "version": "0.0.1",
+   "web_accessible_resources": []
+}
