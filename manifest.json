@@ -1,8 +1,4 @@
 {
-   "background": {
-      "persistent": false,
-      "scripts": [ "background.js" ]
-   },
    "content_scripts": [
       {
          "js": [ "flyff.js" ],
@@ -15,9 +11,9 @@
       "16": "logo.png",
       "48": "logo.png"
    },
-   "manifest_version": 2,
-   "name": "No Cors",
-   "permissions": ["*://*/*"],
+   "manifest_version": 3,
+   "name": "Flyff Buttons",
+   "permissions": [],
    "version": "0.0.1",
    "web_accessible_resources": []
 }
