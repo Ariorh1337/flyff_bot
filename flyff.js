@@ -9,7 +9,7 @@ class LocalCheats {
         this.createToggleButton();
     }
 
-    addCheatLine( name, config ) {
+    addCheatLine(name, config) {
         if (this.cheatLines.has(name)) {
             console.error(`Cheat line ${name} already exists`);
             return;
@@ -53,6 +53,9 @@ class LocalCheats {
     createCheatsList() {
         const panel = document.createElement("div");
         panel.style.setProperty("display", "none");
+        panel.style.setProperty("flex-direction", "column");
+        panel.style.setProperty("align-items", "center");
+
         this.container.appendChild(panel);
 
         return panel;
@@ -66,17 +69,52 @@ class LocalCheats {
 
         button.addEventListener("click", () => {
             this.visible = !this.visible;
-            const display = this.visible ? "block" : "none";
+            const display = this.visible ? "flex" : "none";
             this.cheatList.style.setProperty("display", display);
         });
     }
 }
 
-function keyPress(key) {
-    const canvas = document.querySelector("canvas");
-    canvas.dispatchEvent(new KeyboardEvent('keydown',  { 'key':key }));
-    canvas.dispatchEvent(new KeyboardEvent('keyup', { 'key':key }));
+class Keyboard {
+    #pull = [];
+    #time = 500;
+
+    constructor() {}
+
+    /**
+     * @param {Object} event 
+     * @param {string} event.key
+     * @param {number} event.cast
+     */
+    press(event) {
+        this.#pull.push(event);
+
+        setTimeout(() => {
+            this.#update();
+
+            setTimeout(() => { 
+                this.#time -= event.cast; 
+            }, event.cast);
+        }, this.#time);
+
+        this.#time += event.cast;
+    }
+
+    #update() {
+        const event = this.#pull.shift();
+        if (!event || !event.key || event.key === "") return;
+
+        this.#eventEmmit(event.key);
+    }
+
+    #eventEmmit(key) {
+        const canvas = document.querySelector("canvas");
+        canvas.dispatchEvent(new KeyboardEvent('keydown', { key }));
+        canvas.dispatchEvent(new KeyboardEvent('keyup', { key }));
+    }
 }
+
+const keyboard = new Keyboard();
 
 function createFollow(cheats) {
     cheats.addCheatLine("follow", {
@@ -93,7 +131,7 @@ function createFollow(cheats) {
 
     setInterval(() => {
         const isFollowEnabled = document.getElementById("follow-input").checked;
-        if (isFollowEnabled) keyPress("z");
+        if (isFollowEnabled) keyboard.press({ key: "z", cast: 100 });
         if (localStorage.getItem("follow-input") != isFollowEnabled) {
             localStorage.setItem("follow-input", isFollowEnabled);
         }
@@ -106,30 +144,39 @@ function createKeyDown(cheats, index) {
         attributes: [["id", `keydown_${index}`]],
         styles: [
             ["display", "flex"],
-            ["width", "110px"],
+            ["width", "fit-content"],
             ["margin-bottom", "10px"],
             ["justify-content", "space-around"],
         ],
-        innerHTML: `<input id="keydown_${index}_enabled" type="checkbox" style="width: 50px; text-align: center;">
-                    <input id="keydown_${index}_time" type="number" placeholder="1000" style="width: 50px; text-align: center;">
-                    <input id="keydown_${index}_key" type="string" placeholder="c" style="width: 16px; text-align: center;">`,
+        innerHTML: `<input id="keydown_${index}_enabled" type="checkbox" style="width: 19px; text-align: center;">
+                    <input id="keydown_${index}_time" type="number" placeholder="interval" style="width: 70px; text-align: center;">
+                    <input id="keydown_${index}_cast" type="number" placeholder="casting" style="width: 60px; text-align: center;">
+                    <input id="keydown_${index}_key" type="string" placeholder="key" style="width: 20px; text-align: center;">`,
     });
 
     let timeout = -1;
     setInterval(() => {
         const time = Number(document.getElementById(`keydown_${index}_time`).value);
+        const cast = Number(document.getElementById(`keydown_${index}_cast`).value);
         const key = document.getElementById(`keydown_${index}_key`).value.trim();
+
         if (isNaN(time) || !isFinite(time)) return;
         if (key.length !== 1) return;
 
         const isEnabled = document.getElementById(`keydown_${index}_enabled`).checked;
 
-        if (!isEnabled && timeout === -1) return clearTimeout(timeout);
+        if (!isEnabled && timeout !== -1) {
+            clearTimeout(timeout);
+            timeout = -1;
+            return;
+        }
         if (isEnabled && timeout === -1) {
-            timeout = setTimeout(() => {
-                keyPress(document.getElementById(`keydown_${index}_key`).value);
+            const event = () => {
+                keyboard.press({ key, cast });
                 timeout = -1;
-            }, document.getElementById(`keydown_${index}_time`).value);
+            };
+
+            timeout = setTimeout(event, time);
         }
     }, 100);
 }
@@ -152,8 +199,8 @@ function createKeyDown(cheats, index) {
         ],
         innerHTML: `<button id="add_keydown" style="width: fit-content; text-align: center;">Add Keydown</button>`,
     })
-    ?.querySelector("#add_keydown")
-    ?.addEventListener("pointerdown", () => {
-        createKeyDown(cheats, index++);
-    });
+        ?.querySelector("#add_keydown")
+        ?.addEventListener("pointerdown", () => {
+            createKeyDown(cheats, index++);
+        });
 })();
