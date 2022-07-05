@@ -59,13 +59,13 @@ class App {
         this.ui.addCheatLine(`keydown_${i}`, {
             tag: "div",
             outerHTML: `
-                <div id="keydown_${i}" style="display: flex; width: fit-content; margin-bottom: 10px; justify-content: space-around;"></div>
+                <div id="${id.line}" style="display: flex; width: fit-content; margin-bottom: 10px; justify-content: space-around;"></div>
             `,
             innerHTML: `
-                <input id="keydown_${i}_enabled" type="checkbox" style="width: 19px; text-align: center;">
-                <input id="keydown_${i}_time" type="number" placeholder="interval" style="width: 70px; text-align: center;">
-                <input id="keydown_${i}_cast" type="number" placeholder="casting" style="width: 60px; text-align: center;">
-                <input id="keydown_${i}_key" type="string" placeholder="key" style="width: 20px; text-align: center;">
+                <input id="${id.on}" type="checkbox" style="width: 19px; text-align: center;">
+                <input id="${id.time}" type="number" placeholder="interval" style="width: 70px; text-align: center;">
+                <input id="${id.cast}" type="number" placeholder="casting" style="width: 60px; text-align: center;">
+                <input id="${id.key}" type="string" placeholder="key" style="width: 20px; text-align: center;">
             `,
         });
 
