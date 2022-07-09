@@ -46,7 +46,15 @@ border-radius: 6px;`;
 export const container = `<div id="cheats_container" style="${cheats_container_style}">
     <div style="align-items: center; display: flex; flex-direction: column;">
         <div id="cheats_collapse" class="collapse card card-body" style="margin-bottom: 5px;">
-            <div class="input-group" style="margin-bottom: 5px; justify-content: center;">
+            <div class="card card-body" style="margin-bottom: 10px;">
+                <div class="input-group">
+                    <div class="form-check form-switch">  
+                        <input id="input_follow" class="form-check-input" type="checkbox" role="switch">
+                        <span class="" id="basic-addon1" style="margin-left: 5px;">follow \`z by default\`</span>
+                    </div>
+                </div>
+            </div>
+            <div class="input-group" style="margin-bottom: 10px; justify-content: center;">
                 <span class="input-group-text">Add</span>
                 <button id="cheats_add_timeline" class="btn btn-primary" type="button">Timeline</button>
                 <button id="cheats_add_key" class="btn btn-primary" type="button">Key</button>
@@ -57,7 +65,7 @@ export const container = `<div id="cheats_container" style="${cheats_container_s
 </div>`;
 
 export const collapseTimeline = (id: number) => `
-<div style="align-items: center; display: flex; flex-direction: column; margin-bottom: 5px;" name="input_timeline" id="input_timeline_${id}">
+<div style="align-items: center; display: flex; flex-direction: column; margin-top: 5px;" name="input_timeline" id="input_timeline_${id}">
     <div id="timeline_${id}_collapse" class="collapse card card-body" style="margin-bottom: 5px;"></div>
     <div class="input-group">
         <div class="form-check form-switch" style="display: flex; align-items: center;">
@@ -71,7 +79,7 @@ export const collapseTimeline = (id: number) => `
 </div>`;
 
 export const input_key_group = (id: number) => `
-<div style="display: flex; margin-bottom: 0.5em;" name="input_key" id="input_${id}">
+<div style="display: flex; margin-top: 0.5em;" name="input_key" id="input_${id}">
     <div class="form-check form-switch" style="display: flex; align-items: center;">
         <input id="input_${id}_on" class="form-check-input" type="checkbox" role="switch" data-block-id="input_${id}">
     </div>

@@ -18,6 +18,21 @@ class App {
         const container = html.toElement(html.container)!;
         document.body.appendChild(container);
 
+        let interval = <NodeJS.Timer | number>-1;
+        const follow = <HTMLInputElement>html.get(`#input_follow`);
+        follow.addEventListener("change", (event: Event) => {
+            const target = event.target as HTMLInputElement;
+            const enabled = target.checked;
+            if (!enabled) {
+                clearInterval(interval);
+                return (interval = -1);
+            }
+
+            interval = setInterval(() => {
+                this.input.send({ cast: 100, key: "z" });
+            }, 5000);
+        });
+
         const button = <HTMLInputElement>html.get(`#cheats_add_timeline`);
         button.addEventListener("pointerdown", this.createTimer.bind(this));
 
