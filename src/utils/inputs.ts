@@ -1,10 +1,5 @@
 import { timer } from "./timer";
 
-type MouseEvent = {
-    x: number;
-    y: number;
-};
-
 type KeyboardEvent = {
     shiftKey?: boolean;
     ctrlKey?: boolean;
@@ -46,7 +41,7 @@ export default class Input {
 
     private initMouse() {
         window.addEventListener("load", async () => {
-            await new Promise((r) => setTimeout(r, 2000));
+            await timer(2000);
 
             const mouseup = (<any>window).JSEvents.eventHandlers.filter(
                 (elm: any) => elm.eventTypeString === "mouseup"

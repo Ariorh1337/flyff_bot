@@ -37,7 +37,10 @@ padding: 10px;
 display: flex;
 flex-direction: column;
 align-items: center;
-zoom: 0.65;
+transform: scale(0.65);
+transform-origin: top left;
+-moz-transform: scale(0.65);
+-moz-transform-origin: top left;
 border-radius: 6px;`;
 
 export const container = `<div id="cheats_container" style="${cheats_container_style}">
