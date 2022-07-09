@@ -1,3 +1,5 @@
+import { timer } from "./timer";
+
 type MouseEvent = {
     x: number;
     y: number;
@@ -25,22 +27,21 @@ export default class Input {
         this.initMouse();
     }
 
-    public send(
+    public async send(
         event:
             | { key: string; cast: number }
             | { x: number; y: number; cast: number }
     ) {
         this.pull.push(event);
 
-        setTimeout(() => {
-            this.update();
-
-            setTimeout(() => {
-                this.time -= event.cast;
-            }, event.cast);
-        }, this.time);
-
+        const time = this.time;
         this.time += event.cast;
+
+        await timer(time);
+        this.update();
+        await timer(event.cast);
+
+        this.time -= event.cast;
     }
 
     private initMouse() {
@@ -53,8 +54,6 @@ export default class Input {
             const mousedown = (<any>window).JSEvents.eventHandlers.filter(
                 (elm: any) => elm.eventTypeString === "mousedown"
             )[0];
-
-            console.warn([mouseup, mousedown]);
 
             this.emitMouseUp = mouseup.eventListenerFunc;
             this.emitMouseDown = mousedown.eventListenerFunc;
@@ -76,12 +75,15 @@ export default class Input {
         }
     }
 
-    private keyEmmit(key: string) {
+    private async keyEmmit(key: string) {
         const event = this.defineKey(key);
 
         this.downExtra(event);
+        await timer();
         this.mainElm!.dispatchEvent(new KeyboardEvent("keydown", event));
+        await timer();
         this.mainElm!.dispatchEvent(new KeyboardEvent("keyup", event));
+        await timer();
         this.upExtra(event);
     }
 
@@ -161,15 +163,12 @@ export default class Input {
         }
     }
 
-    private clickEmmit(x: number, y: number) {
-        const event_down = new MouseEvent(
-            "mousedown",
-            this.clickTemplate(x, y)
-        );
-        this.emitMouseDown(event_down);
+    private async clickEmmit(x: number, y: number) {
+        const event_obj = this.clickTemplate(x, y);
 
-        const event_up = new MouseEvent("mouseup", this.clickTemplate(x, y));
-        this.emitMouseUp(event_up);
+        this.emitMouseDown(new MouseEvent("mousedown", event_obj));
+        await timer();
+        this.emitMouseUp(new MouseEvent("mouseup", event_obj));
     }
 
     private clickTemplate(x: number, y: number) {
