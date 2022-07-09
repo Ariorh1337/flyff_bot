@@ -50,7 +50,7 @@ class App {
         });
     }
 
-    createTimer() {
+    private createTimer() {
         const timer_counter_save = this.timer_counter++;
 
         const cheats_container = <HTMLElement>html.get(`#cheats_collapse`);
@@ -127,7 +127,7 @@ class App {
         });
     }
 
-    createTimerKey(timer_counter_save: number) {
+    private createTimerKey(timer_counter_save: number) {
         const key_counter_save =
             this.timer_key_counter.get(timer_counter_save) || 0;
         this.timer_key_counter.set(timer_counter_save, key_counter_save + 1);
@@ -157,7 +157,7 @@ class App {
         });
     }
 
-    createClickKey(timer_counter_save: number) {
+    private createClickKey(timer_counter_save: number) {
         const key_counter_save =
             this.timer_key_counter.get(timer_counter_save) || 0;
         this.timer_key_counter.set(timer_counter_save, key_counter_save + 1);
@@ -223,7 +223,7 @@ class App {
         });
     }
 
-    createKey() {
+    private createKey() {
         const key_counter_save = this.key_counter++;
         const cheats_container = <HTMLElement>html.get(`#cheats_collapse`);
         const timer = html.toElement(html.input_key_group(key_counter_save))!;
@@ -254,7 +254,7 @@ class App {
         });
     }
 
-    onCheckboxChange(event: Event) {
+    private onCheckboxChange(event: Event) {
         const target = event.target as HTMLInputElement;
         const block = target.getAttribute("data-block-id");
         const enabled = target.checked;

@@ -71,7 +71,7 @@ export const collapseTimeline = (id: number) => `
         <div class="form-check form-switch" style="display: flex; align-items: center;">
             <input id="timeline_${id}_on" class="form-check-input" type="checkbox" role="switch" data-block-id="input_timeline_${id}">
         </div>
-        <button class="btn btn-primary cant_lock" type="button" data-bs-toggle="collapse" data-bs-target="#timeline_${id}_collapse" aria-expanded="false" aria-controls="timeline_${id}_collapse" style="border-top-left-radius: 5px; border-bottom-left-radius: 5px;">Show</button>
+        <button class="btn btn-primary cant_lock" type="button" data-bs-toggle="collapse" data-bs-target="#timeline_${id}_collapse" aria-expanded="false" aria-controls="timeline_${id}_collapse" style="border-top-left-radius: 5px; border-bottom-left-radius: 5px;">Settings</button>
         <button id="timeline_${id}_add" class="btn btn-primary" type="button">Key</button>
         <button id="timeline_${id}_add_click" class="btn btn-primary" type="button">Click</button>
         <input id="timeline_${id}_time" type="string" class="form-control" placeholder="interval" aria-label="Interval" style="width: 70px; padding: 3px;">
