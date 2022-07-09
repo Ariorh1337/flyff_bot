@@ -1,13 +1,14 @@
 import "bootstrap";
 import "bootstrap/dist/css/bootstrap.css";
+
 import * as html from "./ui/html";
-import Keyboard from "./utils/keyboard";
+import Input from "./utils/inputs";
 
 const canvas = <HTMLElement>html.get(`canvas`);
 
 class App {
     private canvas = canvas;
-    private keyboard = new Keyboard(canvas);
+    private input = new Input(canvas);
     private timer_counter = 0;
     private timer_key_counter = new Map();
     private key_counter = 0;
@@ -26,11 +27,11 @@ class App {
         container.addEventListener("pointerdown", () => {
             this.isFocused = true;
         });
-        canvas.addEventListener("pointerdown", () => {
+        this.canvas.addEventListener("pointerdown", () => {
             if (!this.isFocused) return;
 
             this.isFocused = false;
-            canvas.focus();
+            this.canvas.focus();
         });
     }
 
@@ -49,42 +50,63 @@ class App {
             this.createTimerKey.bind(this, timer_counter_save)
         );
 
-        this.createTimerKey(timer_counter_save);
+        const button2 = <HTMLInputElement>(
+            html.get(`#timeline_${timer_counter_save}_add_click`)
+        );
+        button2.addEventListener(
+            "pointerdown",
+            this.createClickKey.bind(this, timer_counter_save)
+        );
 
         let interval = <NodeJS.Timer | number>-1;
         const block = <HTMLInputElement>(
             html.get(`#timeline_${timer_counter_save}_on`)
         );
         block?.addEventListener("change", (event: Event) => {
+            const target = event.target as HTMLInputElement;
+
+            const id = timer_counter_save;
+            const duration = html.getInput(`timeline_${id}_time`)!.value;
+            if (Number(duration) <= 0) return (target.checked = false);
+
             this.onCheckboxChange(event);
 
-            const target = event.target as HTMLInputElement;
             const enabled = target.checked;
             if (!enabled) {
                 clearInterval(interval);
                 return (interval = -1);
             }
 
-            const id = timer_counter_save;
-            const duration = html.getInput(`timeline_${id}_time`)!.value;
-
             const keys_blocks = <HTMLInputElement[]>(
-                html.getAll(`#input_timeline_${id}_timer`)
+                html.getAll(`div[name="input_timeline_${id}_timer"]`)
             );
             const keys = [...keys_blocks].map((block) => {
                 const key = (<HTMLInputElement>(
-                    block.querySelector(`input[name="key"]`)!
-                )).value;
+                    block.querySelector(`input[name="key"]`)
+                ))?.value;
                 const cast = (<HTMLInputElement>(
-                    block.querySelector(`input[name="cast"]`)!
-                )).value;
+                    block.querySelector(`input[name="cast"]`)
+                ))?.value;
 
-                return { cast, key };
+                const x = (<HTMLInputElement>(
+                    block.querySelector(`input[name="x"]`)
+                ))?.value;
+                const y = (<HTMLInputElement>(
+                    block.querySelector(`input[name="y"]`)
+                ))?.value;
+
+                if (key && cast && key !== "" && cast !== "") {
+                    return { cast: +cast, key };
+                }
+
+                if (x && y && x !== "" && y !== "") {
+                    return { x: +x, y: +y, cast: 100 };
+                }
             });
 
             interval = setInterval(() => {
                 keys.forEach((data) => {
-                    this.keyboard.press({ cast: +data.cast, key: data.key });
+                    this.input.send(<any>data);
                 });
             }, Number(duration));
         });
@@ -120,6 +142,72 @@ class App {
         });
     }
 
+    createClickKey(timer_counter_save: number) {
+        const key_counter_save =
+            this.timer_key_counter.get(timer_counter_save) || 0;
+        this.timer_key_counter.set(timer_counter_save, key_counter_save + 1);
+
+        const cheats_container = <HTMLElement>(
+            html.get(`#timeline_${timer_counter_save}_collapse`)
+        );
+
+        const timer = html.toElement(
+            html.click_timeline_group(
+                `timeline_${timer_counter_save}_timer`,
+                `timeline_${timer_counter_save}_timer_${key_counter_save}`
+            )
+        );
+
+        cheats_container?.appendChild(timer);
+
+        const button = <HTMLInputElement>(
+            html.get(
+                `#input_timeline_${timer_counter_save}_timer_${key_counter_save}_remove`
+            )
+        );
+        button.addEventListener("pointerdown", function (event: Event) {
+            const target = event.target as HTMLInputElement;
+            const block = target.getAttribute("data-block-id");
+            (<HTMLElement>html.get(`#${block}`)).remove();
+        });
+
+        const button2 = <HTMLInputElement>(
+            html.get(
+                `#input_timeline_${timer_counter_save}_timer_${key_counter_save}_pos`
+            )
+        );
+
+        let enabled = true;
+        button2.addEventListener("pointerdown", (event: Event) => {
+            if (!enabled) return;
+            enabled = false;
+
+            const canvas = this.canvas;
+
+            const id = (e: string) =>
+                `input_timeline_${timer_counter_save}_timer_${key_counter_save}_${e}`;
+            const input_x = html.getInput(id("x"))!;
+            const input_y = html.getInput(id("y"))!;
+
+            const update_pos = (event: MouseEvent) => {
+                const x = event.offsetX;
+                const y = event.offsetY;
+
+                input_x.value = x.toString();
+                input_y.value = y.toString();
+            };
+
+            function remove() {
+                canvas.removeEventListener("pointermove", update_pos);
+                canvas.removeEventListener("pointerdown", remove);
+                enabled = true;
+            }
+
+            canvas.addEventListener("pointermove", update_pos);
+            canvas.addEventListener("pointerdown", remove);
+        });
+    }
+
     createKey() {
         const key_counter_save = this.key_counter++;
         const cheats_container = <HTMLElement>html.get(`#cheats_collapse`);
@@ -146,7 +234,7 @@ class App {
             const key = html.getInput(`input_${id}_key`)!.value;
 
             interval = setInterval(() => {
-                this.keyboard.press({ cast: +cast, key });
+                this.input.send({ cast: +cast, key });
             }, Number(duration));
         });
     }

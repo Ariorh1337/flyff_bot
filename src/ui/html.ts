@@ -1,3 +1,5 @@
+import * as svg from "./svg";
+
 export function toElement(html: string) {
     var template = document.createElement("template");
     html = html.trim(); // Never return a text node of whitespace as the result
@@ -60,6 +62,7 @@ export const collapseTimeline = (id: number) => `
         </div>
         <button class="btn btn-primary cant_lock" type="button" data-bs-toggle="collapse" data-bs-target="#timeline_${id}_collapse" aria-expanded="false" aria-controls="timeline_${id}_collapse" style="border-top-left-radius: 5px; border-bottom-left-radius: 5px;">Show</button>
         <button id="timeline_${id}_add" class="btn btn-primary" type="button">Key</button>
+        <button id="timeline_${id}_add_click" class="btn btn-primary" type="button">Click</button>
         <input id="timeline_${id}_time" type="string" class="form-control" placeholder="interval" aria-label="Interval" style="width: 70px; padding: 3px;">
     </div>
 </div>`;
@@ -78,10 +81,22 @@ export const input_key_group = (id: number) => `
 `;
 
 export const input_timeline_group = (parent: string, name: string) => `
-<div style="display: flex; width: 234px; margin-bottom: 0.5em;" id="input_${parent}">
+<div style="display: flex; width: 234px; margin-bottom: 0.5em;" name="input_${parent}" id="input_${name}">
     <div class="input-group">
+        <span class="input-group-text">${svg.key}</span>
         <input name="cast" id="input_${name}_cast" type="string" class="form-control" placeholder="casting" aria-label="Casting" style="width: 45px; padding: 3px;">
         <input name="key" id="input_${name}_key" type="string" class="form-control" placeholder="key" aria-label="Key" style="width: 20px; padding: 3px;">
+        <button id="input_${name}_remove" type="button" class="btn btn-secondary" aria-label="Close" data-block-id="input_${name}">x</button>
+    </div>
+</div>
+`;
+
+export const click_timeline_group = (parent: string, name: string) => `
+<div style="display: flex; width: 234px; margin-bottom: 0.5em;" name="input_${parent}" id="input_${name}">
+    <div class="input-group">
+        <button id="input_${name}_pos" type="button" class="btn btn-info">${svg.mouse}</button>
+        <input name="x" id="input_${name}_x" type="string" class="form-control" placeholder="x" aria-label="X" style="width: 45px; padding: 3px;">
+        <input name="y" id="input_${name}_y" type="string" class="form-control" placeholder="y" aria-label="Y" style="width: 20px; padding: 3px;">
         <button id="input_${name}_remove" type="button" class="btn btn-secondary" aria-label="Close" data-block-id="input_${name}">x</button>
     </div>
 </div>

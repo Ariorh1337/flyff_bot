@@ -6,7 +6,7 @@
     "permissions": [],
     "content_scripts": [
         {
-            "js": ["flyff.js"],
+            "js": ["inject.js"],
             "matches": ["*://universe.flyff.com/play*"]
         }
     ],
@@ -14,5 +14,6 @@
         "128": "logo.png",
         "16": "logo.png",
         "48": "logo.png"
-    }
+    },
+    "web_accessible_resources": ["flyff.js"]
 }

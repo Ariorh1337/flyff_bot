@@ -1,3 +1,8 @@
+type MouseEvent = {
+    x: number;
+    y: number;
+};
+
 type KeyboardEvent = {
     shiftKey?: boolean;
     ctrlKey?: boolean;
@@ -5,16 +10,26 @@ type KeyboardEvent = {
     key: string;
 };
 
-export default class Keyboard {
+export default class Input {
     private mainElm: HTMLElement;
-    private pull: Array<{ key: string; cast: number }> = [];
+    private pull: Array<
+        { key: string; cast: number } | { x: number; y: number }
+    > = [];
     private time = 500;
+    private emitMouseUp!: Function;
+    private emitMouseDown!: Function;
 
     constructor(mainElm: HTMLElement) {
         this.mainElm = mainElm;
+
+        this.initMouse();
     }
 
-    public press(event: { key: string; cast: number }) {
+    public send(
+        event:
+            | { key: string; cast: number }
+            | { x: number; y: number; cast: number }
+    ) {
         this.pull.push(event);
 
         setTimeout(() => {
@@ -28,14 +43,40 @@ export default class Keyboard {
         this.time += event.cast;
     }
 
-    private update() {
-        const event = this.pull.shift();
-        if (!event || !event.key || event.key === "") return;
+    private initMouse() {
+        window.addEventListener("load", async () => {
+            await new Promise((r) => setTimeout(r, 2000));
 
-        this.eventEmmit(event.key);
+            const mouseup = (<any>window).JSEvents.eventHandlers.filter(
+                (elm: any) => elm.eventTypeString === "mouseup"
+            )[0];
+            const mousedown = (<any>window).JSEvents.eventHandlers.filter(
+                (elm: any) => elm.eventTypeString === "mousedown"
+            )[0];
+
+            console.warn([mouseup, mousedown]);
+
+            this.emitMouseUp = mouseup.eventListenerFunc;
+            this.emitMouseDown = mousedown.eventListenerFunc;
+        });
     }
 
-    private eventEmmit(key: string) {
+    private update() {
+        const event = this.pull.shift();
+        if (!event) return;
+
+        if (Object.hasOwnProperty.call(event, "key")) {
+            if ((<any>event).key === "") return;
+
+            this.keyEmmit((<any>event).key);
+        }
+
+        if (Object.hasOwnProperty.call(event, "x")) {
+            this.clickEmmit((<any>event).x, (<any>event).y);
+        }
+    }
+
+    private keyEmmit(key: string) {
         const event = this.defineKey(key);
 
         this.downExtra(event);
@@ -118,5 +159,53 @@ export default class Keyboard {
                 )
             );
         }
+    }
+
+    private clickEmmit(x: number, y: number) {
+        const event_down = new MouseEvent(
+            "mousedown",
+            this.clickTemplate(x, y)
+        );
+        this.emitMouseDown(event_down);
+
+        const event_up = new MouseEvent("mouseup", this.clickTemplate(x, y));
+        this.emitMouseUp(event_up);
+    }
+
+    private clickTemplate(x: number, y: number) {
+        return {
+            altKey: false,
+            bubbles: true,
+            button: 0,
+            buttons: 1,
+            cancelBubble: false,
+            cancelable: true,
+            clientX: x,
+            clientY: y,
+            composed: true,
+            ctrlKey: false,
+            currentTarget: null,
+            defaultPrevented: true,
+            detail: 1,
+            eventPhase: 0,
+            fromElement: null,
+            layerX: x,
+            layerY: y,
+            metaKey: false,
+            movementX: 0,
+            movementY: 0,
+            offsetX: x,
+            offsetY: y,
+            pageX: x,
+            pageY: y,
+            relatedTarget: null,
+            returnValue: false,
+            screenX: x,
+            screenY: y,
+            shiftKey: false,
+            which: 1,
+            x,
+            y,
+        };
     }
 }

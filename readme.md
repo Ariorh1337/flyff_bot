@@ -43,3 +43,4 @@ v0.0.4
 
 -   New UI
 -   Fixed Alt \ Ctrl \ Shift keys
+-   Mouse click added
