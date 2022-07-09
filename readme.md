@@ -36,3 +36,10 @@ Firefox: `npm run build-firefox`
 5. Left top corner you will see "Cheats" button
 
 ## KNOWN ISSUES
+
+## ChangeLog
+
+v0.0.4
+
+-   New UI
+-   Fixed Alt \ Ctrl \ Shift keys
