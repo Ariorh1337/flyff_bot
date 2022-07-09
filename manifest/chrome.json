@@ -1,7 +1,7 @@
 {
     "name": "Flyff Buttons",
     "description": "Auto buttons for Flyff Universe",
-    "version": "0.0.3",
+    "version": "0.0.5",
     "manifest_version": 3,
     "permissions": [],
     "content_scripts": [
