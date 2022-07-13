@@ -22,6 +22,21 @@ class App {
         const container = html.toElement(html.container)!;
         document.body.appendChild(container);
 
+        const upgrade = <HTMLLinkElement>html.get(`#cheats_upgrade`);
+        fetch(
+            "https://api.github.com/repos/Ariorh1337/flyff_bot/releases/latest"
+        )
+            .then((r) => r.json())
+            .then((data) => {
+                upgrade.setAttribute("href", data.html_url);
+
+                if (data.name === upgrade.getAttribute("name")) return;
+
+                upgrade.innerHTML = `Update:<br>${upgrade.getAttribute(
+                    "name"
+                )}->${data.name}`;
+            });
+
         let interval = <NodeJS.Timer | number>-1;
         const follow = <HTMLInputElement>html.get(`#input_follow`);
         follow.addEventListener("change", (event: Event) => {
@@ -333,12 +348,10 @@ class App {
                     x2 = centerX + (10 + 5 * angle) * Math.cos(angle);
                     y2 = centerY + (10 + 5 * angle) * Math.sin(angle);
 
-                    if (x2 < 0) x2 = 0;
-                    if (x2 > width) x2 = width;
-                    if (y2 < 0) y2 = 0;
-                    if (y2 > height) y2 = height;
-
+                    if (x2 < 0 || y2 < 0) continue;
+                    if (x2 > width || y2 > height) continue;
                     if (Math.hypot(x2 - x, y2 - y) < 7) continue;
+
                     [x, y] = [x2, y2];
 
                     this.ctx2D.arc(x, y, 3, 0, 2 * Math.PI);

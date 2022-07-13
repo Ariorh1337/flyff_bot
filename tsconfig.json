@@ -5,9 +5,10 @@
         "target": "es6",
         "esModuleInterop": true,
         "sourceMap": true,
-        "rootDir": "src",
+        "rootDir": "./",
         "outDir": "dist/js",
         "noEmitOnError": true,
-        "typeRoots": ["node_modules/@types"]
+        "typeRoots": ["node_modules/@types"],
+        "resolveJsonModule": true
     }
 }

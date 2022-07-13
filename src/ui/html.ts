@@ -1,3 +1,4 @@
+import { version } from "../../package.json";
 import * as svg from "./svg";
 
 export function toElement(html: string) {
@@ -62,6 +63,7 @@ export const container = `<div id="cheats_container" style="${cheats_container_s
         </div>
         <button id="cheats_target" class="btn btn-primary" type="button" style="margin: 5px;">Target</button>
         <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#cheats_collapse" aria-expanded="false" aria-controls="collapse_cheats" style="margin: 5px;">Cheats</button>
+        <a id="cheats_upgrade" name="v${version}" href="#" style="text-align: center;">v${version}</a>    
     </div>
 </div>`;
 
