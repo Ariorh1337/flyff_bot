@@ -30,7 +30,7 @@ export function getAll<T>(selectors: string): T {
 
 const cheats_container_style = `position: absolute;
 width: fit-content;
-top: 100px;
+top: 0px;
 right: 0;
 background-color: white;
 padding: 10px;
@@ -60,6 +60,7 @@ export const container = `<div id="cheats_container" style="${cheats_container_s
                 <button id="cheats_add_key" class="btn btn-primary" type="button">Key</button>
             </div>
         </div>
+        <button id="cheats_target" class="btn btn-primary" type="button" style="margin: 5px;">Target</button>
         <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#cheats_collapse" aria-expanded="false" aria-controls="collapse_cheats" style="margin: 5px;">Cheats</button>
     </div>
 </div>`;
@@ -86,7 +87,7 @@ export const input_key_group = (id: number) => `
     <div class="input-group">
         <input id="input_${id}_time" type="string" class="form-control" placeholder="interval" aria-label="Interval" style="width: 70px; padding: 3px;">
         <input id="input_${id}_cast" type="string" class="form-control" placeholder="casting" aria-label="Casting" style="width: 70px; padding: 3px;">
-        <input id="input_${id}_key" type="string" class="form-control" placeholder="key" aria-label="Key" style="width: 45px; padding: 3px;">
+        <input id="input_${id}_key" type="string" class="form-control" placeholder="key" aria-label="Key" style="width: 55px; padding: 3px;">
     </div>
 </div>
 `;

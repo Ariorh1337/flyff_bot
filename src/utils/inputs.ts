@@ -8,6 +8,8 @@ type KeyboardEvent = {
 };
 
 export default class Input {
+    public cursorMutation = new Function();
+
     private mainElm: HTMLElement;
     private pull: Array<
         { key: string; cast: number } | { x: number; y: number }
@@ -15,11 +17,13 @@ export default class Input {
     private time = 500;
     private emitMouseUp!: Function;
     private emitMouseDown!: Function;
+    private emitMouseMove!: Function;
 
     constructor(mainElm: HTMLElement) {
         this.mainElm = mainElm;
 
         this.initMouse();
+        this.initCursorObserver();
     }
 
     public async send(
@@ -39,6 +43,20 @@ export default class Input {
         this.time -= event.cast;
     }
 
+    public async mouseMoveEmmit(x: number, y: number) {
+        const event_obj = this.moveTemplate(x, y);
+        this.emitMouseMove(new MouseEvent("mousemove", event_obj));
+        await timer(1);
+    }
+
+    public async mouseClickEmmit(x: number, y: number) {
+        const event_obj = this.clickTemplate(x, y);
+
+        this.emitMouseDown(new MouseEvent("mousedown", event_obj));
+        await timer();
+        this.emitMouseUp(new MouseEvent("mouseup", event_obj));
+    }
+
     private initMouse() {
         window.addEventListener("load", async () => {
             await timer(2000);
@@ -49,9 +67,31 @@ export default class Input {
             const mousedown = (<any>window).JSEvents.eventHandlers.filter(
                 (elm: any) => elm.eventTypeString === "mousedown"
             )[0];
+            const mousemove = (<any>window).JSEvents.eventHandlers.filter(
+                (elm: any) => elm.eventTypeString === "mousemove"
+            )[0];
 
             this.emitMouseUp = mouseup.eventListenerFunc;
             this.emitMouseDown = mousedown.eventListenerFunc;
+            this.emitMouseMove = mousemove.eventListenerFunc;
+        });
+    }
+
+    private initCursorObserver() {
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutationRecord) => {
+                if (
+                    document.body.style
+                        .getPropertyValue("cursor")
+                        .indexOf("curattack") !== -1
+                ) {
+                    this.cursorMutation();
+                }
+            });
+        });
+        observer.observe(document.body, {
+            attributes: true,
+            attributeFilter: ["style"],
         });
     }
 
@@ -66,7 +106,7 @@ export default class Input {
         }
 
         if (Object.hasOwnProperty.call(event, "x")) {
-            this.clickEmmit((<any>event).x, (<any>event).y);
+            this.mouseClickEmmit((<any>event).x, (<any>event).y);
         }
     }
 
@@ -158,14 +198,6 @@ export default class Input {
         }
     }
 
-    private async clickEmmit(x: number, y: number) {
-        const event_obj = this.clickTemplate(x, y);
-
-        this.emitMouseDown(new MouseEvent("mousedown", event_obj));
-        await timer();
-        this.emitMouseUp(new MouseEvent("mouseup", event_obj));
-    }
-
     private clickTemplate(x: number, y: number) {
         return {
             altKey: false,
@@ -198,6 +230,43 @@ export default class Input {
             screenY: y,
             shiftKey: false,
             which: 1,
+            x,
+            y,
+        };
+    }
+
+    private moveTemplate(x: number, y: number) {
+        return {
+            altKey: false,
+            bubbles: true,
+            button: 0,
+            buttons: 0,
+            cancelBubble: false,
+            cancelable: true,
+            clientX: x,
+            clientY: y,
+            composed: true,
+            ctrlKey: false,
+            currentTarget: null,
+            defaultPrevented: true,
+            detail: 1,
+            eventPhase: 0,
+            fromElement: null,
+            layerX: x,
+            layerY: y,
+            metaKey: false,
+            movementX: 0,
+            movementY: 0,
+            offsetX: x,
+            offsetY: y,
+            pageX: x,
+            pageY: y,
+            relatedTarget: null,
+            returnValue: false,
+            screenX: x,
+            screenY: y,
+            shiftKey: false,
+            which: 0,
             x,
             y,
         };

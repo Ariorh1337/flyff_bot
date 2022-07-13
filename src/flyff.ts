@@ -3,11 +3,15 @@ import "bootstrap/dist/css/bootstrap.css";
 
 import * as html from "./ui/html";
 import Input from "./utils/inputs";
+import { timer } from "./utils/timer";
 
 const canvas = <HTMLElement>html.get(`canvas`);
 
 class App {
     private canvas = canvas;
+    private canvas2D!: HTMLCanvasElement;
+    private ctx2D!: CanvasRenderingContext2D;
+
     private input = new Input(canvas);
     private timer_counter = 0;
     private timer_key_counter = new Map();
@@ -48,6 +52,17 @@ class App {
             this.isFocused = false;
             this.canvas.focus();
         });
+
+        const target = <HTMLInputElement>html.get(`#cheats_target`);
+        target.addEventListener("pointerdown", async () => {
+            target.classList.remove("btn-primary");
+            target.classList.add("btn-secondary");
+            await this.searchTarget();
+            target.classList.remove("btn-secondary");
+            target.classList.add("btn-primary");
+        });
+
+        this.create2DCanvas();
     }
 
     private createTimer() {
@@ -248,9 +263,24 @@ class App {
             const cast = html.getInput(`input_${id}_cast`)!.value;
             const key = html.getInput(`input_${id}_key`)!.value;
 
-            interval = setInterval(() => {
-                this.input.send({ cast: +cast, key });
-            }, Number(duration));
+            if (key.indexOf("TAB") !== -1) {
+                let done = false;
+                const target = <HTMLInputElement>html.get(`#cheats_target`);
+                interval = setInterval(async () => {
+                    if (done) return;
+                    done = true;
+                    await this.attackTarget(target, {
+                        count: Number(duration),
+                        key: key.replace("TAB+", ""),
+                        cast: Number(cast),
+                    });
+                    done = false;
+                }, 100);
+            } else {
+                interval = setInterval(() => {
+                    this.input.send({ cast: +cast, key });
+                }, Number(duration));
+            }
         });
     }
 
@@ -270,6 +300,102 @@ class App {
                 (<HTMLButtonElement>input).disabled = enabled;
             }
         );
+    }
+
+    private searchTarget() {
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        const centerX = width / 2;
+        const centerY = height / 2;
+
+        let done = false;
+        let x = 0;
+        let y = 0;
+        let angle = 0;
+
+        const time = new Date().getTime();
+
+        return new Promise((resolve) => {
+            this.input.cursorMutation = () => {
+                this.input.mouseClickEmmit(x, y);
+                done = true;
+                this.input.cursorMutation = new Function();
+
+                (<any>window).timeout = new Date().getTime() - time;
+
+                resolve(1);
+            };
+
+            (async () => {
+                this.ctx2D.clearRect(0, 0, width, height);
+                this.ctx2D.moveTo(centerX, centerY);
+                this.ctx2D.beginPath();
+
+                for (let i = 0; i < 360 * 2; i++) {
+                    angle = 0.1 * i;
+
+                    x = centerX + (10 + 5 * angle) * Math.cos(angle);
+                    y = centerY + (10 + 5 * angle) * Math.sin(angle);
+
+                    await this.input.mouseMoveEmmit(x, y);
+
+                    this.ctx2D.arc(x, y, 3, 0, 2 * Math.PI);
+                    this.ctx2D.strokeStyle = "#fff";
+                    this.ctx2D.stroke();
+
+                    if (done) break;
+                }
+
+                this.ctx2D.closePath();
+
+                timer(1000).then(() =>
+                    this.ctx2D.clearRect(0, 0, width, height)
+                );
+
+                (<any>window).timeout = new Date().getTime() - time;
+
+                resolve(1);
+            })();
+        });
+    }
+
+    private async attackTarget(
+        target: HTMLInputElement,
+        data: {
+            count: number;
+            key: string;
+            cast: number;
+        }
+    ) {
+        target.classList.remove("btn-primary");
+        target.classList.add("btn-secondary");
+        await this.searchTarget();
+        await timer(500);
+        for (let i = 0; i < data.count; i++) {
+            await this.input.send({ cast: data.cast, key: data.key });
+        }
+        target.classList.remove("btn-secondary");
+        target.classList.add("btn-primary");
+    }
+
+    private create2DCanvas() {
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+
+        const canvas = document.createElement("canvas");
+        document.body.append(canvas);
+
+        canvas.setAttribute("id", "canvas2D");
+        canvas.setAttribute("width", String(width));
+        canvas.setAttribute("height", String(height));
+
+        canvas.style.setProperty("pointer-events", "none");
+        canvas.style.setProperty("width", "100%");
+        canvas.style.setProperty("height", "100%");
+        canvas.style.setProperty("position", "absolute");
+
+        this.canvas2D = canvas;
+        this.ctx2D = canvas.getContext("2d")!;
     }
 }
 
