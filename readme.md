@@ -40,6 +40,20 @@ Firefox: `npm run build-firefox`
 
 ## ChangeLog
 
+### v0.1.0
+
+-   improve speed Auto Tagret
+-   add version info
+
+### v0.0.6
+
+-   add Auto Tagret
+
+### v0.0.5
+
+-   fix Follow
+-   fix HTML
+
 ### v0.0.4
 
 -   New UI
