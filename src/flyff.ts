@@ -309,9 +309,7 @@ class App {
         const centerY = height / 2;
 
         let done = false;
-        let x = 0;
-        let y = 0;
-        let angle = 0;
+        let [x, x2, y, y2] = [0, 0, 0, 0];
 
         const time = new Date().getTime();
 
@@ -323,7 +321,7 @@ class App {
 
                 (<any>window).timeout = new Date().getTime() - time;
 
-                resolve(1);
+                resolve(true);
             };
 
             (async () => {
@@ -331,22 +329,30 @@ class App {
                 this.ctx2D.moveTo(centerX, centerY);
                 this.ctx2D.beginPath();
 
-                for (let i = 0; i < 360 * 2; i++) {
-                    angle = 0.1 * i;
+                for (let angle = 0.01; angle < 72; angle += 0.01) {
+                    x2 = centerX + (10 + 5 * angle) * Math.cos(angle);
+                    y2 = centerY + (10 + 5 * angle) * Math.sin(angle);
 
-                    x = centerX + (10 + 5 * angle) * Math.cos(angle);
-                    y = centerY + (10 + 5 * angle) * Math.sin(angle);
+                    if (x2 < 0) x2 = 0;
+                    if (x2 > width) x2 = width;
+                    if (y2 < 0) y2 = 0;
+                    if (y2 > height) y2 = height;
 
-                    await this.input.mouseMoveEmmit(x, y);
+                    if (Math.hypot(x2 - x, y2 - y) < 7) continue;
+                    [x, y] = [x2, y2];
 
                     this.ctx2D.arc(x, y, 3, 0, 2 * Math.PI);
                     this.ctx2D.strokeStyle = "#fff";
                     this.ctx2D.stroke();
 
+                    await this.input.mouseMoveEmmit(x, y);
+
                     if (done) break;
                 }
 
                 this.ctx2D.closePath();
+
+                this.input.cursorMutation = new Function();
 
                 timer(1000).then(() =>
                     this.ctx2D.clearRect(0, 0, width, height)
@@ -354,7 +360,7 @@ class App {
 
                 (<any>window).timeout = new Date().getTime() - time;
 
-                resolve(1);
+                resolve(false);
             })();
         });
     }
@@ -369,11 +375,14 @@ class App {
     ) {
         target.classList.remove("btn-primary");
         target.classList.add("btn-secondary");
-        await this.searchTarget();
-        await timer(500);
-        for (let i = 0; i < data.count; i++) {
-            await this.input.send({ cast: data.cast, key: data.key });
+
+        if (await this.searchTarget()) {
+            await timer(500);
+            for (let i = 0; i < data.count; i++) {
+                await this.input.send({ cast: data.cast, key: data.key });
+            }
         }
+
         target.classList.remove("btn-secondary");
         target.classList.add("btn-primary");
     }
@@ -393,6 +402,14 @@ class App {
         canvas.style.setProperty("width", "100%");
         canvas.style.setProperty("height", "100%");
         canvas.style.setProperty("position", "absolute");
+        canvas.style.setProperty("opacity", "0.2");
+
+        window.addEventListener("resize", () => {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            canvas.setAttribute("width", String(width));
+            canvas.setAttribute("height", String(height));
+        });
 
         this.canvas2D = canvas;
         this.ctx2D = canvas.getContext("2d")!;
