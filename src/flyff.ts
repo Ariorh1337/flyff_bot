@@ -1,6 +1,7 @@
 import "bootstrap";
 import "bootstrap/dist/css/bootstrap.css";
 
+import Draggabilly from "draggabilly";
 import * as html from "./ui/html";
 import Input from "./utils/inputs";
 import { timer } from "./utils/timer";
@@ -21,6 +22,7 @@ class App {
     constructor() {
         const container = html.toElement(html.container)!;
         document.body.appendChild(container);
+        new Draggabilly(<Element>container, {});
 
         const upgrade = <HTMLLinkElement>html.get(`#cheats_upgrade`);
         fetch(
