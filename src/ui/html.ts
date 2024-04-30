@@ -61,8 +61,16 @@ export const container = `<div id="cheats_container" style="${cheats_container_s
                 <button id="cheats_add_key" class="btn btn-primary" type="button">Key</button>
             </div>
         </div>
+        <div id="collapse_memory" class="collapse card card-body" style="margin-bottom: 5px;">
+            <div class="input-group">
+                <input id="input_memory" type="string" class="form-control" placeholder="0x00ff00ff">
+                <button id="button_memory" class="btn btn-primary" type="button">-\></button>
+            </div>
+            <span id="text_memory" class="input-group-text">...</span>
+        </div>
         <button id="cheats_target" class="btn btn-primary" type="button" style="margin: 5px;">Target</button>
         <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#cheats_collapse" aria-expanded="false" aria-controls="collapse_cheats" style="margin: 5px;">Cheats</button>
+        <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_memory" aria-expanded="false" aria-controls="collapse_memory" style="margin: 5px;">Memory</button>
         <a id="cheats_upgrade" name="v${version}" href="#" style="text-align: center;">v${version}</a>    
     </div>
 </div>`;
