@@ -105,7 +105,7 @@ class App {
             this.createClickKey.bind(this, timer_counter_save)
         );
 
-        let interval = <NodeJS.Timer | number>-1;
+        let interval = <number>-1;
         const block = <HTMLInputElement>(
             html.get(`#timeline_${timer_counter_save}_on`)
         );
@@ -155,7 +155,7 @@ class App {
                 keys.forEach((data) => {
                     this.input.send(<any>data);
                 });
-            }, Number(duration));
+            }, Number(duration)) as any as number;
         });
     }
 
