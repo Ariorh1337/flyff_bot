@@ -108,14 +108,14 @@ class App {
         const removeButton = <HTMLInputElement>(
             html.get(`#timeline_${timer_counter_save}_remove`)
         );
-        removeButton.addEventListener("click", function() {
+        removeButton.addEventListener("click", function () {
             const parentElement = this.closest(`[id^="input_timeline_"]`);
             if (parentElement) {
                 parentElement.remove();
             }
         });
 
-        let interval: Interval = -1;
+        let interval = -1;
         const block = <HTMLInputElement>(
             html.get(`#timeline_${timer_counter_save}_on`)
         );
@@ -313,7 +313,7 @@ class App {
         const removeButton = <HTMLInputElement>(
             html.get(`#input_${key_counter_save}_remove`)
         );
-        removeButton.addEventListener("click", function() {
+        removeButton.addEventListener("click", function () {
             const blockId = this.getAttribute("data-block-id");
             const parentElement = document.getElementById(blockId!);
             if (parentElement) {
