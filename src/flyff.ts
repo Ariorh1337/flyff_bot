@@ -39,7 +39,7 @@ class App {
                 )}->${data.name}`;
             });
 
-        let interval = <NodeJS.Timer | number>-1;
+        let interval = -1;
         const follow = <HTMLInputElement>html.get(`#input_follow`);
         follow.addEventListener("change", (event: Event) => {
             const target = event.target as HTMLInputElement;
@@ -261,7 +261,7 @@ class App {
         const timer = html.toElement(html.input_key_group(key_counter_save))!;
         cheats_container?.appendChild(timer);
 
-        let interval = <NodeJS.Timer | number>-1;
+        let interval = -1;
         const block = <HTMLInputElement>(
             html.get(`#input_${key_counter_save}_on`)
         );
@@ -307,12 +307,14 @@ class App {
         const enabled = target.checked;
 
         const block_element = document.getElementById(block!);
-        [
-            ...block_element?.querySelectorAll(`input:not([type="checkbox"])`)!,
-        ].forEach((input) => {
+
+        const notCheckboxes = block_element?.querySelectorAll(`input:not([type="checkbox"])`)!;
+        notCheckboxes.forEach((input) => {
             (<HTMLInputElement>input).disabled = enabled;
         });
-        [...block_element?.querySelectorAll(`button:not(.cant_lock)`)!].forEach(
+
+        const notLocked = block_element?.querySelectorAll(`button:not(.cant_lock)`)!;
+        notLocked.forEach(
             (input) => {
                 (<HTMLButtonElement>input).disabled = enabled;
             }
