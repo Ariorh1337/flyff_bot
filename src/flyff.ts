@@ -8,8 +8,6 @@ import { timer } from "./utils/timer";
 
 const canvas = <HTMLElement>html.get(`canvas`);
 
-type Interval = ReturnType<typeof setInterval>;
-
 class App {
     private canvas = canvas;
     private canvas2D!: HTMLCanvasElement;
@@ -41,14 +39,14 @@ class App {
                 )}->${data.name}`;
             });
 
-        let interval: Interval = -1 as unknown as Interval;
+        let interval = -1;
         const follow = <HTMLInputElement>html.get(`#input_follow`);
         follow.addEventListener("change", (event: Event) => {
             const target = event.target as HTMLInputElement;
             const enabled = target.checked;
             if (!enabled) {
                 clearInterval(interval);
-                return (interval = -1 as unknown as Interval);
+                return interval = -1;
             }
 
             interval = setInterval(() => {
@@ -117,7 +115,7 @@ class App {
             }
         });
 
-        let interval: Interval = -1 as unknown as Interval;
+        let interval: Interval = -1;
         const block = <HTMLInputElement>(
             html.get(`#timeline_${timer_counter_save}_on`)
         );
@@ -133,7 +131,7 @@ class App {
             const enabled = target.checked;
             if (!enabled) {
                 clearInterval(interval);
-                return (interval = -1 as unknown as Interval);
+                return interval = -1;
             }
 
             const keys_blocks = <HTMLInputElement[]>(
@@ -273,7 +271,7 @@ class App {
         const timer = html.toElement(html.input_key_group(key_counter_save))!;
         cheats_container?.appendChild(timer);
 
-        let interval: Interval = -1 as unknown as Interval;
+        let interval = -1;
         const block = <HTMLInputElement>(
             html.get(`#input_${key_counter_save}_on`)
         );
@@ -284,7 +282,7 @@ class App {
             const enabled = target.checked;
             if (!enabled) {
                 clearInterval(interval);
-                return (interval = -1 as unknown as Interval);
+                return interval = -1;
             }
 
             const id = key_counter_save;
@@ -330,12 +328,14 @@ class App {
         const enabled = target.checked;
 
         const block_element = document.getElementById(block!);
-        [
-            ...block_element?.querySelectorAll(`input:not([type="checkbox"])`)!,
-        ].forEach((input) => {
+
+        const notCheckboxes = block_element?.querySelectorAll(`input:not([type="checkbox"])`)!;
+        notCheckboxes.forEach((input) => {
             (<HTMLInputElement>input).disabled = enabled;
         });
-        [...block_element?.querySelectorAll(`button:not(.cant_lock)`)!].forEach(
+
+        const notLocked = block_element?.querySelectorAll(`button:not(.cant_lock)`)!;
+        notLocked.forEach(
             (input) => {
                 (<HTMLButtonElement>input).disabled = enabled;
             }
