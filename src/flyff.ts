@@ -8,6 +8,8 @@ import { timer } from "./utils/timer";
 
 const canvas = <HTMLElement>html.get(`canvas`);
 
+type Interval = ReturnType<typeof setInterval>;
+
 class App {
     private canvas = canvas;
     private canvas2D!: HTMLCanvasElement;
@@ -39,14 +41,14 @@ class App {
                 )}->${data.name}`;
             });
 
-        let interval = <NodeJS.Timer | number>-1;
+        let interval: Interval = -1 as unknown as Interval;
         const follow = <HTMLInputElement>html.get(`#input_follow`);
         follow.addEventListener("change", (event: Event) => {
             const target = event.target as HTMLInputElement;
             const enabled = target.checked;
             if (!enabled) {
                 clearInterval(interval);
-                return (interval = -1);
+                return (interval = -1 as unknown as Interval);
             }
 
             interval = setInterval(() => {
@@ -105,7 +107,17 @@ class App {
             this.createClickKey.bind(this, timer_counter_save)
         );
 
-        let interval = <number>-1;
+        const removeButton = <HTMLInputElement>(
+            html.get(`#timeline_${timer_counter_save}_remove`)
+        );
+        removeButton.addEventListener("click", function() {
+            const parentElement = this.closest(`[id^="input_timeline_"]`);
+            if (parentElement) {
+                parentElement.remove();
+            }
+        });
+
+        let interval: Interval = -1 as unknown as Interval;
         const block = <HTMLInputElement>(
             html.get(`#timeline_${timer_counter_save}_on`)
         );
@@ -121,7 +133,7 @@ class App {
             const enabled = target.checked;
             if (!enabled) {
                 clearInterval(interval);
-                return (interval = -1);
+                return (interval = -1 as unknown as Interval);
             }
 
             const keys_blocks = <HTMLInputElement[]>(
@@ -153,9 +165,9 @@ class App {
 
             interval = setInterval(() => {
                 keys.forEach((data) => {
-                    this.input.send(<any>data);
+                    this.input.send(data!);
                 });
-            }, Number(duration)) as any as number;
+            }, Number(duration));
         });
     }
 
@@ -261,7 +273,7 @@ class App {
         const timer = html.toElement(html.input_key_group(key_counter_save))!;
         cheats_container?.appendChild(timer);
 
-        let interval = <NodeJS.Timer | number>-1;
+        let interval: Interval = -1 as unknown as Interval;
         const block = <HTMLInputElement>(
             html.get(`#input_${key_counter_save}_on`)
         );
@@ -272,7 +284,7 @@ class App {
             const enabled = target.checked;
             if (!enabled) {
                 clearInterval(interval);
-                return (interval = -1);
+                return (interval = -1 as unknown as Interval);
             }
 
             const id = key_counter_save;
@@ -297,6 +309,17 @@ class App {
                 interval = setInterval(() => {
                     this.input.send({ cast: +cast, key });
                 }, Number(duration));
+            }
+        });
+
+        const removeButton = <HTMLInputElement>(
+            html.get(`#input_${key_counter_save}_remove`)
+        );
+        removeButton.addEventListener("click", function() {
+            const blockId = this.getAttribute("data-block-id");
+            const parentElement = document.getElementById(blockId!);
+            if (parentElement) {
+                parentElement.remove();
             }
         });
     }
