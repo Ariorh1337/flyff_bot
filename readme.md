@@ -40,6 +40,12 @@ Firefox: `npm run build-firefox`
 
 ## ChangeLog
 
+### v0.1.1
+
+-   ui element is dragable (thx @maximeb97)
+-   type error fixed (thx @s0569591 & @lrphael)
+-   added deletion buttons (thx @lrphael)
+
 ### v0.1.0
 
 -   improve speed Auto Tagret
