@@ -78,6 +78,7 @@ export const collapseTimeline = (id: number) => `
         <button id="timeline_${id}_add" class="btn btn-primary" type="button">Key</button>
         <button id="timeline_${id}_add_click" class="btn btn-primary" type="button">Click</button>
         <input id="timeline_${id}_time" type="string" class="form-control" placeholder="interval" aria-label="Interval" style="width: 70px; padding: 3px;">
+        <button id="timeline_${id}_remove" type="button" class="btn btn-secondary" aria-label="Close" data-block-id="timeline_${id}">x</button>
     </div>
 </div>`;
 
@@ -90,6 +91,7 @@ export const input_key_group = (id: number) => `
         <input id="input_${id}_time" type="string" class="form-control" placeholder="interval" aria-label="Interval" style="width: 70px; padding: 3px;">
         <input id="input_${id}_cast" type="string" class="form-control" placeholder="casting" aria-label="Casting" style="width: 70px; padding: 3px;">
         <input id="input_${id}_key" type="string" class="form-control" placeholder="key" aria-label="Key" style="width: 55px; padding: 3px;">
+        <button id="input_${id}_remove" type="button" class="btn btn-secondary" aria-label="Close" data-block-id="input_${id}">x</button>
     </div>
 </div>
 `;
