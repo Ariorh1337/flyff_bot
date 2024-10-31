@@ -59,7 +59,9 @@ export default class Input {
 
     private initMouse() {
         window.addEventListener("load", async () => {
-            await timer(2000);
+            do {
+                await timer(100);
+            } while (!(<any>window).JSEvents);
 
             const mouseup = (<any>window).JSEvents.eventHandlers.filter(
                 (elm: any) => elm.eventTypeString === "mouseup"

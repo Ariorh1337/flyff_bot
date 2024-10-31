@@ -46,7 +46,7 @@ class App {
             const enabled = target.checked;
             if (!enabled) {
                 clearInterval(interval);
-                return interval = -1;
+                return (interval = -1);
             }
 
             interval = setInterval(() => {
@@ -131,7 +131,7 @@ class App {
             const enabled = target.checked;
             if (!enabled) {
                 clearInterval(interval);
-                return interval = -1;
+                return (interval = -1);
             }
 
             const keys_blocks = <HTMLInputElement[]>(
@@ -282,7 +282,7 @@ class App {
             const enabled = target.checked;
             if (!enabled) {
                 clearInterval(interval);
-                return interval = -1;
+                return (interval = -1);
             }
 
             const id = key_counter_save;
@@ -329,17 +329,19 @@ class App {
 
         const block_element = document.getElementById(block!);
 
-        const notCheckboxes = block_element?.querySelectorAll(`input:not([type="checkbox"])`)!;
+        const notCheckboxes = block_element?.querySelectorAll(
+            `input:not([type="checkbox"])`
+        )!;
         notCheckboxes.forEach((input) => {
             (<HTMLInputElement>input).disabled = enabled;
         });
 
-        const notLocked = block_element?.querySelectorAll(`button:not(.cant_lock)`)!;
-        notLocked.forEach(
-            (input) => {
-                (<HTMLButtonElement>input).disabled = enabled;
-            }
-        );
+        const notLocked = block_element?.querySelectorAll(
+            `button:not(.cant_lock)`
+        )!;
+        notLocked.forEach((input) => {
+            (<HTMLButtonElement>input).disabled = enabled;
+        });
     }
 
     private searchTarget() {

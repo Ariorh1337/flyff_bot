@@ -3,11 +3,14 @@
     "description": "Auto buttons for Flyff Universe",
     "version": "0.0.6",
     "manifest_version": 3,
-    "permissions": [],
     "content_scripts": [
         {
-            "js": ["inject.js"],
-            "matches": ["*://universe.flyff.com/play*"]
+            "world": "MAIN",
+            "js": ["flyff.js"],
+            "matches": ["*://universe.flyff.com/play*"],
+            "match_about_blank": true,
+            "all_frames": true,
+            "run_at": "document_end"
         }
     ],
     "icons": {
