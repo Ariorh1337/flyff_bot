@@ -43,6 +43,12 @@ Firefox: `npm run build-firefox`
 
 ## ChangeLog
 
+### v0.1.2
+
+-   fix script injection menifest v3
+-   fix mouse init event
+-   readme auto target example added
+
 ### v0.1.1
 
 -   ui element is dragable (thx @maximeb97)
